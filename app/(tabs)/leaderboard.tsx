@@ -158,15 +158,8 @@ export default function LeaderboardScreen() {
         <RNStatusBar backgroundColor={Colors[colorScheme].primaryGreen} barStyle="light-content" />
       )}
       
-      {/* Header */}
+      {/* Header - Empty to match other screens */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.menuButton}>
-          <Ionicons name="menu" size={28} color="white" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.notificationButton}>
-          <Ionicons name="notifications" size={24} color="white" />
-        </TouchableOpacity>
       </View>
       
       {/* Main content */}
@@ -194,10 +187,6 @@ export default function LeaderboardScreen() {
               </TouchableOpacity>
             ))}
           </View>
-          
-          <TouchableOpacity style={styles.filterButton}>
-            <Ionicons name="options" size={24} color="white" />
-          </TouchableOpacity>
         </View>
         
         {/* Top 3 Users (Podium) */}
@@ -229,17 +218,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.primaryGreen,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-  },
-  menuButton: {
-    padding: 4,
-  },
-  notificationButton: {
-    padding: 4,
   },
   contentContainer: {
     flex: 1,
@@ -260,7 +240,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24,
     padding: 4,
-    marginRight: 12,
   },
   filterTab: {
     flex: 1,
@@ -278,14 +257,6 @@ const styles = StyleSheet.create({
   selectedFilterText: {
     color: 'white',
     fontWeight: '600',
-  },
-  filterButton: {
-    backgroundColor: Colors.light.secondaryGreen,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   podiumContainer: {
     flexDirection: 'row',

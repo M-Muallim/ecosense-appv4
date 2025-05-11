@@ -21,8 +21,7 @@ import { useAuth } from '../context/AuthContext';
 export default function RegisterScreen() {
   const router = useRouter();
   const { register, isLoading, error } = useAuth();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,7 +32,7 @@ export default function RegisterScreen() {
     setLocalError(null);
     
     // Basic validation
-    if (!firstName || !lastName || !email || !password) {
+    if (!username || !email || !password) {
       setLocalError('All fields are required');
       return;
     }
@@ -44,8 +43,7 @@ export default function RegisterScreen() {
     }
     
     try {
-      const displayName = `${firstName} ${lastName}`;
-      await register(email, password, displayName);
+      await register(email, password, username);
       // Navigation is handled by the auth context
     } catch (error: any) {
       // Error is already handled in the auth context
@@ -87,26 +85,15 @@ export default function RegisterScreen() {
           <Text style={styles.title}>Getting Started</Text>
           {(localError || error) && <Text style={styles.error}>{localError || error}</Text>}
 
-          <Text style={styles.label}>First Name</Text>
+          <Text style={styles.label}>Username</Text>
           <View style={styles.inputWrapper}>
             <Ionicons name="person-outline" size={20} color="#888" style={styles.icon} />
             <TextInput
               style={styles.input}
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="John"
-              editable={!isLoading}
-            />
-          </View>
-
-          <Text style={styles.label}>Last Name</Text>
-          <View style={styles.inputWrapper}>
-            <Ionicons name="person-outline" size={20} color="#888" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Doe"
+              value={username}
+              onChangeText={setUsername}
+              placeholder="johndoe123"
+              autoCapitalize="none"
               editable={!isLoading}
             />
           </View>

@@ -23,10 +23,6 @@ export default function HomeScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="menu" size={24} color="#fff" />
-        </TouchableOpacity>
-
         <View style={styles.profileRow}>
           <View style={styles.avatarContainer}>
             <Image
@@ -38,12 +34,6 @@ export default function HomeScreen() {
             <Text style={styles.helloText}>Hello,</Text>
             <Text style={styles.usernameText}>johndeo</Text>
           </View>
-        </View>
-
-        <View style={styles.iconsRight}>
-          <TouchableOpacity style={styles.notificationButton}>
-            <Ionicons name="notifications-outline" size={24} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -71,50 +61,80 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Most Recycled Items */}
+          {/* Challenges Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Most Recycled Items</Text>
-              <Text style={styles.viewAll}>View all</Text>
+              <Text style={styles.sectionTitle}>Challenges</Text>
             </View>
-            <View style={styles.cardsRow}>
-              {/* Plastic Card */}
-              <View style={styles.bigCard}>
-                <View style={styles.iconContainer}>
-                  <MaterialCommunityIcons name="cup" size={24} color="#FF8C66" />
+            
+            <View style={styles.challengesContainer}>
+              {/* Challenge 1 */}
+              <View style={styles.challengeCard}>
+                <View style={[styles.challengeIconContainer, { backgroundColor: '#E8FFF3' }]}>
+                  <MaterialCommunityIcons name="cup" size={24} color="#60CA9A" />
                 </View>
-                <Text style={styles.plasticTitle}>Plastic</Text>
-                <Text style={styles.bigCardNumber}>62</Text>
-                <Text style={styles.bigCardUnit}>times</Text>
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Recycle 5 Plastic Items</Text>
+                  <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: '40%' }]} />
+                  </View>
+                  <Text style={styles.challengeProgress}>2/5 completed</Text>
+                </View>
               </View>
-              
-              <View style={styles.smallCards}>
-                {/* Glass Card */}
-                <View style={styles.smallCard}>
-                  <View style={styles.smallCardTop}>
-                    <View style={[styles.smallIconContainer, { backgroundColor: '#E8FFF3' }]}>
-                      <MaterialCommunityIcons name="bottle-wine" size={22} color="#60CA9A" />
-                    </View>
-                    <Text style={styles.smallCardTitle}>Glass</Text>
-                  </View>
-                  <View style={styles.smallCardBottom}>
-                    <Text style={styles.smallCardNumber}>15</Text>
-                    <Text style={styles.smallCardUnit}>times</Text>
-                  </View>
+
+              {/* Challenge 2 */}
+              <View style={styles.challengeCard}>
+                <View style={[styles.challengeIconContainer, { backgroundColor: '#FFF7E8' }]}>
+                  <MaterialCommunityIcons name="bottle-wine" size={24} color="#FFC566" />
                 </View>
-                
-                {/* Metal Card */}
-                <View style={styles.smallCard}>
-                  <View style={styles.smallCardTop}>
-                    <View style={[styles.smallIconContainer, { backgroundColor: '#FFF7E8' }]}>
-                      <MaterialCommunityIcons name="lightning-bolt" size={22} color="#FFC566" />
-                    </View>
-                    <Text style={styles.smallCardTitle}>Metal</Text>
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Recycle 3 Glass Items</Text>
+                  <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: '33%' }]} />
                   </View>
-                  <View style={styles.smallCardBottom}>
-                    <Text style={styles.smallCardNumber}>15</Text>
-                    <Text style={styles.smallCardUnit}>times</Text>
+                  <Text style={styles.challengeProgress}>1/3 completed</Text>
+                </View>
+              </View>
+
+              {/* Challenge 3 */}
+              <View style={styles.challengeCard}>
+                <View style={[styles.challengeIconContainer, { backgroundColor: '#FFE8E8' }]}>
+                  <MaterialCommunityIcons name="lightning-bolt" size={24} color="#FF8C66" />
+                </View>
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Recycle 4 Metal Items</Text>
+                  <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: '0%' }]} />
                   </View>
+                  <Text style={styles.challengeProgress}>0/4 completed</Text>
+                </View>
+              </View>
+
+              {/* Challenge 4 */}
+              <View style={styles.challengeCard}>
+                <View style={[styles.challengeIconContainer, { backgroundColor: '#E5F6FF' }]}>
+                  <MaterialCommunityIcons name="calendar-check" size={24} color="#64B5F6" />
+                </View>
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Recycle 3 Days in a Row</Text>
+                  <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: '66%' }]} />
+                  </View>
+                  <Text style={styles.challengeProgress}>2/3 days</Text>
+                </View>
+              </View>
+
+              {/* Challenge 5 */}
+              <View style={styles.challengeCard}>
+                <View style={[styles.challengeIconContainer, { backgroundColor: '#F3E5FF' }]}>
+                  <MaterialCommunityIcons name="recycle" size={24} color="#9C64F6" />
+                </View>
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Recycle 10 Items Total</Text>
+                  <View style={styles.progressBarContainer}>
+                    <View style={[styles.progressBar, { width: '30%' }]} />
+                  </View>
+                  <Text style={styles.challengeProgress}>3/10 items</Text>
                 </View>
               </View>
             </View>
@@ -171,16 +191,6 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontSize: 20, 
     fontWeight: '600', 
-  },
-  iconsRight: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
-  },
-  notificationButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   contentArea: {
     flex: 1,
@@ -266,111 +276,64 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
   },
-  viewAll: { 
-    color: Colors.light.primaryGreen, 
-    fontWeight: '600',
-    fontSize: 16,
+  
+  // Challenge styles
+  challengesContainer: {
+    width: '100%',
   },
+  challengeCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  challengeIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  challengeContent: {
+    flex: 1,
+  },
+  challengeTitle: {
+    fontWeight: '600',
+    fontSize: 15,
+    color: '#333',
+    marginBottom: 8,
+  },
+  progressBarContainer: {
+    height: 6,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 3,
+    marginBottom: 6,
+    width: '100%',
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: Colors.light.primaryGreen,
+    borderRadius: 3,
+  },
+  challengeProgress: {
+    fontSize: 12,
+    color: '#888',
+    fontWeight: '500',
+  },
+
+  // Existing styles below
   cardsRow: { 
     flexDirection: 'row', 
     justifyContent: 'space-between',
     width: '100%',
-  },
-  bigCard: {
-    width: '49%',
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-    height: 180,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  smallCards: { 
-    width: '49%', 
-    justifyContent: 'space-between',
-    height: 180,
-  },
-  smallCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-    marginBottom: 15,
-    height: 80,
-    width: '100%',
-  },
-  iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 12,
-    backgroundColor: '#FFEDE8',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  smallIconContainer: {
-    width: 42,
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: '#E8FFF3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  plasticTitle: { 
-    color: '#333', 
-    fontWeight: '600', 
-    fontSize: 18,
-    marginVertical: 5,
-  },
-  smallCardTitle: { 
-    color: '#333', 
-    fontWeight: '600',
-    fontSize: 18,
-    marginLeft: 12,
-  },
-  bigCardNumber: {
-    fontSize: 60,
-    fontWeight: '700',
-    color: '#20293A',
-    lineHeight: 65,
-  },
-  bigCardUnit: { 
-    color: '#999',
-    fontSize: 16,
-    alignSelf: 'center',
-    marginTop: -5,
-  },
-  smallCardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-    width: '100%',
-  },
-  smallCardBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-    paddingLeft: 20,
-  },
-  smallCardNumber: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#20293A',
-  },
-  smallCardUnit: { 
-    color: '#999',
-    fontSize: 14,
-    marginLeft: 5,
   },
   backgroundCurve: {
     position: 'absolute',
