@@ -95,6 +95,7 @@ export default function RegisterScreen() {
               placeholder="johndoe123"
               autoCapitalize="none"
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
           </View>
 
@@ -109,6 +110,7 @@ export default function RegisterScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
           </View>
 
@@ -122,6 +124,7 @@ export default function RegisterScreen() {
               placeholder="••••••••"
               secureTextEntry={!showPass}
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
             <TouchableOpacity onPress={() => setShowPass(!showPass)} disabled={isLoading}>
               <Ionicons
@@ -143,6 +146,7 @@ export default function RegisterScreen() {
               placeholder="••••••••"
               secureTextEntry
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
           </View>
 

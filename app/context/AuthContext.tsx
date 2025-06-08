@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, useSegments } from 'expo-router';
-import { 
-  User, 
-  AuthState, 
-  registerUser, 
-  signInUser, 
-  signOutUser, 
-  getCurrentUser,
-  resetPassword,
-  getFirebaseErrorMessage
-} from '../services/firebaseAuth';
+import firebaseAuth, { getCurrentUser, signInUser, registerUser, signOutUser, resetPassword, getFirebaseErrorMessage } from '../../services/firebaseAuth';
+
+type User = {
+  uid: string;
+  email: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+};
 
 // Define the shape of the context
 interface AuthContextType {
@@ -117,8 +115,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Extract Firebase error code if available
       if (error.message && error.message.includes(':')) {
-        const errorCode = error.message.split(':')[0];
-        errorMessage = getFirebaseErrorMessage(errorCode);
+        // Try to extract the error code and any details
+        const [errorCode, ...rest] = error.message.split(':');
+        const trimmedCode = errorCode.trim();
+        // If it's a password requirements error, show the details
+        if (trimmedCode === 'PASSWORD_DOES_NOT_MEET_REQUIREMENTS' && rest.length > 0) {
+          errorMessage = rest.join(':').replace('Missing password requirements', 'Password requirements not met:').trim();
+        } else {
+          errorMessage = getFirebaseErrorMessage(trimmedCode);
+        }
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -152,8 +157,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Extract Firebase error code if available
       if (error.message && error.message.includes(':')) {
-        const errorCode = error.message.split(':')[0];
-        errorMessage = getFirebaseErrorMessage(errorCode);
+        // Try to extract the error code and any details
+        const [errorCode, ...rest] = error.message.split(':');
+        const trimmedCode = errorCode.trim();
+        // If it's a password requirements error, show the details
+        if (trimmedCode === 'PASSWORD_DOES_NOT_MEET_REQUIREMENTS' && rest.length > 0) {
+          errorMessage = rest.join(':').replace('Missing password requirements', 'Password requirements not met:').trim();
+        } else {
+          errorMessage = getFirebaseErrorMessage(trimmedCode);
+        }
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -203,8 +215,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Extract Firebase error code if available
       if (error.message && error.message.includes(':')) {
-        const errorCode = error.message.split(':')[0];
-        errorMessage = getFirebaseErrorMessage(errorCode);
+        // Try to extract the error code and any details
+        const [errorCode, ...rest] = error.message.split(':');
+        const trimmedCode = errorCode.trim();
+        // If it's a password requirements error, show the details
+        if (trimmedCode === 'PASSWORD_DOES_NOT_MEET_REQUIREMENTS' && rest.length > 0) {
+          errorMessage = rest.join(':').replace('Missing password requirements', 'Password requirements not met:').trim();
+        } else {
+          errorMessage = getFirebaseErrorMessage(trimmedCode);
+        }
       } else if (error.message) {
         errorMessage = error.message;
       }

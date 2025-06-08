@@ -1,5 +1,5 @@
 // app/(tabs)/profile.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -15,42 +15,94 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { getUserProfile, getUserWeeklyStats } from '../../services/userService';
+import { useIsFocused } from '@react-navigation/native';
+import Colors from '../../constants/Colors';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { user, logout, isLoading } = useAuth();
+  const router = useRouter();
+  const isFocused = useIsFocused();
+  const [profileData, setProfileData] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [statsData, setStatsData] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      if (!user) {
+        setProfileLoading(false);
+        setStatsLoading(false);
+        return;
+      }
+      try {
+        setProfileLoading(true);
+        setStatsLoading(true);
+        const [profile, stats] = await Promise.all([
+          getUserProfile(user.uid),
+          getUserWeeklyStats(user.uid),
+        ]);
+        setProfileData(profile);
+        // Calculate total from all types
+        const total = Object.values(stats).reduce((sum, n) => sum + n, 0);
+        setStatsData({ total, ...stats });
+      } catch (err) {
+        console.error('Error loading profile data:', err);
+      } finally {
+        setProfileLoading(false);
+        setStatsLoading(false);
+      }
+    })();
+  }, [user, isFocused]);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
-  // Fallback user data if auth user is not available
-  const userData = user ? {
-    avatar: user.photoURL || 'https://via.placeholder.com/100',
-    name: user.displayName || user.email?.split('@')[0] || 'User',
-    email: user.email,
-    bio: '🏞️ Nature lover & recycler',
-    following: 0,
-    followers: 0,
-    joinedYear: new Date().getFullYear(),
-    recyclingStats: {
-      total: 0,
-      plastic: 0,
-      glass: 0,
-      metal: 0,
-    }
-  } : {
-    avatar: 'https://via.placeholder.com/100',
-    name: 'Mohammed.muallim16',
-    email: 'mohammed.muallim16@gmail.com',
-    bio: '🏞️ Nature lover & recycler',
-    following: 0,
-    followers: 0,
-    joinedYear: 2025,
-    recyclingStats: {
-      total: 0,
-      plastic: 0,
-      glass: 0,
-      metal: 0,
-    }
-  };
+  if (profileLoading || statsLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.light.primaryGreen }}>
+        <Text style={{ color: 'white', fontSize: 20 }}>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+  const safeStats = statsData || { total: 0, plastic: 0, glass: 0, metal: 0, paper: 0, cardboard: 0, clothes: 0, organicWaste: 0 };
+  // Format join date
+  let joinedString = '';
+  if (profileData?.createdAt) {
+    const date = new Date(profileData.createdAt);
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+    joinedString = `${month} ${year}`;
+  } else {
+    joinedString = `${new Date().getFullYear()}`;
+  }
+
+  const userData = user
+    ? {
+        avatar: profileData?.photoURL || user.photoURL || 'https://via.placeholder.com/100',
+        name: profileData?.displayName || user.displayName || user.email?.split('@')[0] || 'User',
+        email: user.email,
+        bio: profileData?.bio || '🏞️ Nature lover & recycler',
+        following: 0,
+        followers: 0,
+        joined: joinedString,
+        recyclingStats: safeStats,
+      }
+    : {
+        avatar: 'https://via.placeholder.com/100',
+        name: 'Mohammed.muallim16',
+        email: 'mohammed.muallim16@gmail.com',
+        bio: '🏞️ Nature lover & recycler',
+        following: 0,
+        followers: 0,
+        joined: `${new Date().getFullYear()}`,
+        recyclingStats: safeStats,
+      };
+
+  // Add cache-busting to avatar if it's a Cloudinary URL
+  const avatarUrl = userData.avatar && userData.avatar.includes('res.cloudinary.com')
+    ? `${userData.avatar}?t=${Date.now()}`
+    : userData.avatar;
 
   const handleLogout = async () => {
     try {
@@ -64,7 +116,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F5F8FA" />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.light.primaryGreen} />
 
       {/* Header with settings icon */}
       <View style={styles.headerBar}>
@@ -73,67 +125,95 @@ export default function ProfileScreen() {
           style={styles.settingsIcon}
           onPress={() => setSettingsModalVisible(true)}
         >
-          <Ionicons name="settings-outline" size={24} color="#333" />
+          <Ionicons name="settings-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Avatar + name */}
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            <Image source={{ uri: userData.avatar }} style={styles.avatar} />
-            <TouchableOpacity style={styles.editAvatarButton}>
-              <Ionicons name="pencil-outline" size={20} color="#fff" />
-            </TouchableOpacity>
+      {/* Main content container with curved top */}
+      <View style={styles.contentContainer}>
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* Avatar + name */}
+          <View style={styles.header}>
+            <View style={styles.avatarContainer}>
+              <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+            </View>
+            <Text style={styles.name}>{userData.name}</Text>
+            {userData.email && <Text style={styles.email}>{userData.email}</Text>}
+            {userData.bio ? <Text style={styles.bio}>{userData.bio}</Text> : null}
           </View>
-          <Text style={styles.name}>{userData.name}</Text>
-          {userData.email && <Text style={styles.email}>{userData.email}</Text>}
-          {userData.bio ? <Text style={styles.bio}>{userData.bio}</Text> : null}
-        </View>
 
-        {/* Stats row */}
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{userData.joinedYear}</Text>
-            <Text style={styles.statLabel}>Joined</Text>
-          </View>
-        </View>
-
-        {/* Recycling Stats Section */}
-        <View style={styles.recyclingSection}>
-          <Text style={styles.sectionTitle}>My Recycling Stats</Text>
-          
-          <View style={styles.statsGrid}>
-            {/* Total Items Card */}
-            <View style={styles.statsCard}>
-              <MaterialCommunityIcons name="leaf" size={28} color="#4CAF50" style={styles.cardIcon} />
-              <Text style={styles.statsNumber}>{userData.recyclingStats.total}</Text>
-              <Text style={styles.statsLabel}>Total Items</Text>
-            </View>
-
-            {/* Plastic Card */}
-            <View style={styles.statsCard}>
-              <MaterialCommunityIcons name="cup" size={28} color="#FF8C66" style={styles.cardIcon} />
-              <Text style={styles.statsNumber}>{userData.recyclingStats.plastic}</Text>
-              <Text style={styles.statsLabel}>Plastic</Text>
-            </View>
-
-            {/* Glass Card */}
-            <View style={styles.statsCard}>
-              <MaterialCommunityIcons name="bottle-wine" size={28} color="#60CA9A" style={styles.cardIcon} />
-              <Text style={styles.statsNumber}>{userData.recyclingStats.glass}</Text>
-              <Text style={styles.statsLabel}>Glass</Text>
-            </View>
-
-            {/* Metal Card */}
-            <View style={styles.statsCard}>
-              <MaterialCommunityIcons name="lightning-bolt" size={28} color="#FFC566" style={styles.cardIcon} />
-              <Text style={styles.statsNumber}>{userData.recyclingStats.metal}</Text>
-              <Text style={styles.statsLabel}>Metal</Text>
+          {/* Stats row */}
+          <View style={styles.statsRow}>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{userData.joined}</Text>
+              <Text style={styles.statLabel}>Joined</Text>
             </View>
           </View>
-        </View>
-      </ScrollView>
+
+          {/* Recycling Stats Section */}
+          <View style={styles.recyclingSection}>
+            <Text style={styles.sectionTitle}>My Recycling Stats</Text>
+            
+            <View style={styles.statsGrid}>
+              {/* Total Items Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="leaf" size={28} color="#4CAF50" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.total ?? 0}</Text>
+                <Text style={styles.statsLabel}>Total Items</Text>
+              </View>
+
+              {/* Plastic Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="cup" size={28} color="#FF8C66" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.plastic ?? 0}</Text>
+                <Text style={styles.statsLabel}>Plastic</Text>
+              </View>
+
+              {/* Glass Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="bottle-wine" size={28} color="#60CA9A" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.glass ?? 0}</Text>
+                <Text style={styles.statsLabel}>Glass</Text>
+              </View>
+
+              {/* Metal Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="lightning-bolt" size={28} color="#FFC566" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.metal ?? 0}</Text>
+                <Text style={styles.statsLabel}>Metal</Text>
+              </View>
+
+              {/* Paper Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="file-document-outline" size={28} color="#2196F3" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.paper ?? 0}</Text>
+                <Text style={styles.statsLabel}>Paper</Text>
+              </View>
+
+              {/* Cardboard Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="cube-outline" size={28} color="#A1887F" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.cardboard ?? 0}</Text>
+                <Text style={styles.statsLabel}>Cardboard</Text>
+              </View>
+
+              {/* Clothes Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="tshirt-crew" size={28} color="#FF4081" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.clothes ?? 0}</Text>
+                <Text style={styles.statsLabel}>Clothes</Text>
+              </View>
+
+              {/* Organic Waste Card */}
+              <View style={styles.statsCard}>
+                <MaterialCommunityIcons name="leaf-maple" size={28} color="#8BC34A" style={styles.cardIcon} />
+                <Text style={styles.statsNumber}>{userData.recyclingStats.organic ?? 0}</Text>
+                <Text style={styles.statsLabel}>Organic Waste</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
 
       {/* Settings Modal */}
       <Modal
@@ -151,21 +231,29 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => { setSettingsModalVisible(false); router.push('/edit-profile'); }}>
               <Ionicons name="person-outline" size={24} color="#555" />
               <Text style={styles.settingText}>Edit Profile</Text>
               <Ionicons name="chevron-forward" size={20} color="#999" />
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.settingItem}>
-              <Ionicons name="notifications-outline" size={24} color="#555" />
-              <Text style={styles.settingText}>Notifications</Text>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
-            </TouchableOpacity>
-            
+            {/* Privacy item (Standard) */}
             <TouchableOpacity style={styles.settingItem}>
               <Ionicons name="lock-closed-outline" size={24} color="#555" />
               <Text style={styles.settingText}>Privacy</Text>
+              <Ionicons name="chevron-forward" size={20} color="#999" />
+            </TouchableOpacity>
+            
+            {/* Reset Password item (Top Level) - Added first */}
+            <TouchableOpacity 
+              style={styles.settingItem} 
+              onPress={() => { 
+                setSettingsModalVisible(false);
+                router.push('/reset-password');
+              }}
+            >
+              <Ionicons name="key-outline" size={24} color="#555" />
+              <Text style={styles.settingText}>Reset Password</Text>
               <Ionicons name="chevron-forward" size={20} color="#999" />
             </TouchableOpacity>
             
@@ -199,11 +287,12 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F5F8FA',
+    backgroundColor: Colors.light.primaryGreen,
   },
   container: {
     padding: 16,
     alignItems: 'center',
+    paddingBottom: 120,
   },
   headerBar: {
     flexDirection: 'row',
@@ -227,19 +316,6 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     backgroundColor: '#eee',
-  },
-  editAvatarButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: '#4CAF50',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'white',
   },
   name: {
     fontSize: 22,

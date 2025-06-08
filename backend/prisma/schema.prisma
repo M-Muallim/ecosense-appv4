@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  firebaseUid   String         @unique
+  email         String
+  displayName   String?
+  photoUrl      String?
+  bio           String?
+  createdAt     DateTime       @default(now())
+  recycledItems RecycledItem[]
+  leaderboard   Leaderboard[]
+  userChallenges UserChallenge[]
+}
+
+model RecycledItem {
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
+  type       String    // e.g., 'plastic', 'glass', 'metal', etc.
+  location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int?
+  createdAt  DateTime  @default(now())
+}
+
+model Location {
+  id            Int            @id @default(autoincrement())
+  name          String
+  latitude      Float
+  longitude     Float
+  recycledItems RecycledItem[]
+}
+
+model Leaderboard {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  level         Int      @default(0)
+  weightedScore Int      @default(0)
+  leveledUpAt   DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Challenge {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  points      Int
+  userChallenges UserChallenge[]
+  currentWeekChallenges CurrentWeekChallenge[]
+}
+
+model UserChallenge {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+  challenge    Challenge @relation(fields: [challengeId], references: [id])
+  challengeId  Int
+  weekStart    DateTime
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+  @@unique([userId, challengeId, weekStart])
+}
+
+model CurrentWeekChallenge {
+  id           Int      @id @default(autoincrement())
+  challengeId  Int
+  weekStart    DateTime
+  challenge    Challenge @relation(fields: [challengeId], references: [id])
+}

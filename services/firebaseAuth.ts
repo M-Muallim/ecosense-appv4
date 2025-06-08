@@ -94,6 +94,18 @@ export const registerUser = async (email: string, password: string, displayName?
       emailVerified: data.emailVerified || false
     };
 
+    await fetch('http://192.168.1.124:3001/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firebaseUid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoUrl: user.photoURL,
+        bio: '', // or pass a real bio if you have one
+      }),
+    });
+
     await storeAuthData(user, data.idToken, parseInt(data.expiresIn));
 
     return {
@@ -262,8 +274,45 @@ export const getFirebaseErrorMessage = (errorCode: string): string => {
       return 'Invalid password';
     case 'USER_DISABLED':
       return 'This account has been disabled';
+    case 'WEAK_PASSWORD':
+      return 'Password is too weak. It must contain at least one uppercase letter, one special character, and one number.';
+    case 'PASSWORD_NO_UPPERCASE':
+      return 'Password must contain at least one uppercase character.';
+    case 'PASSWORD_NO_SPECIAL_CHAR':
+      return 'Password must contain at least one special character.';
+    case 'PASSWORD_NO_NUMBER':
+      return 'Password must contain at least one numeric character.';
     default:
       return 'An error occurred. Please try again';
+  }
+};
+
+// Update password
+export const updatePassword = async (idToken: string, newPassword: string): Promise<void> => {
+  try {
+    const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idToken,
+        password: newPassword,
+        returnSecureToken: true
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Password update failed');
+    }
+
+    // Update the stored token with the new one
+    await AsyncStorage.setItem(AUTH_TOKEN_KEY, data.idToken);
+  } catch (error: any) {
+    console.error('Password update error:', error);
+    throw error;
   }
 };
 
@@ -274,6 +323,7 @@ const firebaseAuth = {
   signOutUser,
   getCurrentUser,
   resetPassword,
+  updatePassword,
   refreshUserData,
   getFirebaseErrorMessage
 };

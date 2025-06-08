@@ -102,6 +102,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
           </View>
 
@@ -115,6 +116,7 @@ export default function LoginScreen() {
               placeholder="••••••••"
               secureTextEntry={!showPass}
               editable={!isLoading}
+              placeholderTextColor="#888"
             />
             <TouchableOpacity onPress={() => setShowPass(!showPass)} disabled={isLoading}>
               <Ionicons

@@ -1,5 +1,5 @@
 // app/(tabs)/index.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,141 +9,14 @@ import {
   Image,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
-
-export default function HomeScreen() {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <SafeAreaView style={[styles.safe, { paddingTop: insets.top }]}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.light.primaryGreen} />
-
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.profileRow}>
-          <View style={styles.avatarContainer}>
-            <Image
-              source={{ uri: 'https://i.pravatar.cc/300?img=15' }}
-              style={styles.avatar}
-            />
-          </View>
-          <View style={styles.nameContainer}>
-            <Text style={styles.helloText}>Hello,</Text>
-            <Text style={styles.usernameText}>johndeo</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Main content */}
-      <View style={styles.contentArea}>
-        <View style={styles.backgroundCurve} />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {/* Level Card */}
-          <View style={styles.levelCard}>
-            <View style={styles.progressCircle}>
-              <View style={styles.progressInner}>
-                <MaterialCommunityIcons 
-                  name="coffee" 
-                  size={80} 
-                  color={Colors.light.primaryGreen} 
-                />
-                <Text style={styles.levelLabel}>Level 1</Text>
-              </View>
-            </View>
-            <View style={styles.progressTextContainer}>
-              <Text style={styles.progressText}>2/50 Recycle needed</Text>
-            </View>
-          </View>
-
-          {/* Challenges Section */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Challenges</Text>
-            </View>
-            
-            <View style={styles.challengesContainer}>
-              {/* Challenge 1 */}
-              <View style={styles.challengeCard}>
-                <View style={[styles.challengeIconContainer, { backgroundColor: '#E8FFF3' }]}>
-                  <MaterialCommunityIcons name="cup" size={24} color="#60CA9A" />
-                </View>
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Recycle 5 Plastic Items</Text>
-                  <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: '40%' }]} />
-                  </View>
-                  <Text style={styles.challengeProgress}>2/5 completed</Text>
-                </View>
-              </View>
-
-              {/* Challenge 2 */}
-              <View style={styles.challengeCard}>
-                <View style={[styles.challengeIconContainer, { backgroundColor: '#FFF7E8' }]}>
-                  <MaterialCommunityIcons name="bottle-wine" size={24} color="#FFC566" />
-                </View>
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Recycle 3 Glass Items</Text>
-                  <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: '33%' }]} />
-                  </View>
-                  <Text style={styles.challengeProgress}>1/3 completed</Text>
-                </View>
-              </View>
-
-              {/* Challenge 3 */}
-              <View style={styles.challengeCard}>
-                <View style={[styles.challengeIconContainer, { backgroundColor: '#FFE8E8' }]}>
-                  <MaterialCommunityIcons name="lightning-bolt" size={24} color="#FF8C66" />
-                </View>
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Recycle 4 Metal Items</Text>
-                  <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: '0%' }]} />
-                  </View>
-                  <Text style={styles.challengeProgress}>0/4 completed</Text>
-                </View>
-              </View>
-
-              {/* Challenge 4 */}
-              <View style={styles.challengeCard}>
-                <View style={[styles.challengeIconContainer, { backgroundColor: '#E5F6FF' }]}>
-                  <MaterialCommunityIcons name="calendar-check" size={24} color="#64B5F6" />
-                </View>
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Recycle 3 Days in a Row</Text>
-                  <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: '66%' }]} />
-                  </View>
-                  <Text style={styles.challengeProgress}>2/3 days</Text>
-                </View>
-              </View>
-
-              {/* Challenge 5 */}
-              <View style={styles.challengeCard}>
-                <View style={[styles.challengeIconContainer, { backgroundColor: '#F3E5FF' }]}>
-                  <MaterialCommunityIcons name="recycle" size={24} color="#9C64F6" />
-                </View>
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Recycle 10 Items Total</Text>
-                  <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: '30%' }]} />
-                  </View>
-                  <Text style={styles.challengeProgress}>3/10 items</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </View>
-    </SafeAreaView>
-  );
-}
+import { useAuth } from '../context/AuthContext';
+import { getUserProfile, getUserChallenges, getUserWeeklyStats, getUserLevel, completeUserChallenge } from '../../services/userService';
+import { useIsFocused } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   safe: {
@@ -276,7 +149,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
   },
-  
   // Challenge styles
   challengesContainer: {
     width: '100%',
@@ -328,7 +200,6 @@ const styles = StyleSheet.create({
     color: '#888',
     fontWeight: '500',
   },
-
   // Existing styles below
   cardsRow: { 
     flexDirection: 'row', 
@@ -350,3 +221,191 @@ const styles = StyleSheet.create({
     borderRadius: 9,
   },
 });
+
+// Add a type for challenge
+interface UserChallenge {
+  id: number;
+  challengeId: number;
+  title: string;
+  description: string;
+  points: number;
+  completed: boolean;
+  completedAt: string | null;
+}
+
+export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
+  const { user } = useAuth();
+  const [profileData, setProfileData] = useState<any>(null);
+  const [statsData, setStatsData] = useState<Record<string, number> | null>(null);
+  const [userLevel, setUserLevel] = useState<number>(1);
+  const [levelProgress, setLevelProgress] = useState<{progress:number,needed:number,total:number} | null>(null);
+  const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
+  const [challenges, setChallenges] = useState<UserChallenge[]>([]);
+
+  // Load profile, stats, and level only once (on mount or user change)
+  useEffect(() => {
+    (async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const profile = await getUserProfile(user.uid);
+        setProfileData(profile);
+        // Fetch weekly stats
+        const stats = await getUserWeeklyStats(user.uid);
+        setStatsData(stats);
+        // Fetch user level/progress
+        const levelData = await getUserLevel(user.uid);
+        setUserLevel(levelData.level);
+        setLevelProgress(levelData);
+      } catch (err) {
+        console.error('Error loading home data:', err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [user]);
+
+  // Load challenges every time the screen is focused
+  useEffect(() => {
+    (async () => {
+      if (!user || !isFocused) return;
+      try {
+        const userChallenges = await getUserChallenges(user.uid);
+        setChallenges(userChallenges);
+      } catch (err) {
+        console.error('Error loading challenges:', err);
+      }
+    })();
+  }, [user, isFocused]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.light.primaryGreen }}>
+        <Text style={{ color: 'white', fontSize: 20 }}>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  // Compute progress within the current level
+  const totalItems = statsData?.total ?? 0;
+  const threshold = userLevel <= 10 ? 20 : 40;
+  const offsetStart = userLevel <= 10 ? 20 * (userLevel - 1) : 200 + 40 * (userLevel - 11);
+  let progressInLevel = totalItems - offsetStart;
+  if (progressInLevel < 0) progressInLevel = 0;
+  if (progressInLevel > threshold) progressInLevel = threshold;
+
+  return (
+    <SafeAreaView style={[styles.safe, { paddingTop: insets.top }]}>
+      <StatusBar barStyle="light-content" backgroundColor={Colors.light.primaryGreen} />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.profileRow}>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={{
+                uri:
+                  profileData?.photoURL ||
+                  user?.photoURL ||
+                  'https://via.placeholder.com/100',
+              }}
+              style={styles.avatar}
+            />
+          </View>
+          <View style={styles.nameContainer}>
+            <Text style={styles.helloText}>Hello,</Text>
+            <Text style={styles.usernameText}>
+              {profileData?.displayName ||
+                user?.displayName ||
+                user?.email?.split('@')[0] ||
+                'User'}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Main content */}
+      <View style={styles.contentArea}>
+        <View style={styles.backgroundCurve} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Level Card */}
+          <View style={styles.levelCard}>
+            <View style={styles.progressCircle}>
+              <View style={styles.progressInner}>
+                <MaterialCommunityIcons 
+                  name="coffee" 
+                  size={80} 
+                  color={Colors.light.primaryGreen} 
+                />
+                <Text style={styles.levelLabel}>
+                  {`Level ${userLevel}`}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.progressTextContainer}>
+              <Text style={styles.progressText}>
+                {levelProgress ? `${levelProgress.progress}/${levelProgress.needed} Recycle needed` : ''}
+              </Text>
+            </View>
+          </View>
+
+          {/* Challenges Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Challenges</Text>
+            </View>
+            
+            <View style={styles.challengesContainer}>
+              {challenges.length === 0 ? (
+                <Text style={{ textAlign: 'center', color: '#888', marginTop: 16 }}>No challenges assigned yet.</Text>
+              ) : (
+                challenges.map((challenge, idx) => {
+                  const bgColor = '#E8FFF3';
+                  // Parse challenge title for type and required count
+                  let required = 1;
+                  let type = '';
+                  const match = challenge.title.match(/Recycle (\d+) (\w+)/i);
+                  if (match) {
+                    required = parseInt(match[1], 10);
+                    type = match[2].toLowerCase();
+                  }
+                  // Get user's count for this type from statsData
+                  const userCount = statsData?.[type] ?? 0;
+                  const progress = Math.min((userCount / required) * 100, 100);
+                  const left = Math.max(required - userCount, 0);
+                  return (
+                    <View key={challenge.id} style={styles.challengeCard}>
+                      <View style={[styles.challengeIconContainer, { backgroundColor: bgColor, justifyContent: 'center', alignItems: 'center' }]}> 
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#60CA9A' }}>{idx + 1}</Text>
+                      </View>
+                      <View style={styles.challengeContent}>
+                        <Text style={styles.challengeTitle}>{challenge.title}</Text>
+                        <Text style={{ color: '#888', fontSize: 13, marginBottom: 4 }}>{challenge.description}</Text>
+                        <View style={styles.progressBarContainer}>
+                          <View style={[styles.progressBar, { width: `${progress}%` }]} />
+                        </View>
+                        <Text style={styles.challengeProgress}>{userCount}/{required} completed ({left} left)</Text>
+                        {!challenge.completed && null}
+                        {challenge.completed && (
+                          <Text style={{ color: '#60CA9A', fontWeight: 'bold', marginTop: 8 }}>Completed!</Text>
+                        )}
+                      </View>
+                    </View>
+                  );
+                })
+              )}
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
+}

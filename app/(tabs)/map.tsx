@@ -8,9 +8,12 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import MapView, { Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import Colors from '@/constants/Colors';
+
+const GOOGLE_MAPS_APIKEY = '<YOUR_API_KEY_HERE>'; // replace with your Google Maps API key
 
 type Site = {
   id: string;
@@ -21,9 +24,8 @@ type Site = {
 export default function DisposalMapScreen() {
   const [region, setRegion] = useState<Region | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Dummy disposal sites offset for testting reasons 
   const [sites, setSites] = useState<Site[]>([]);
+  const [destination, setDestination] = useState<Site['coordinate'] | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -76,15 +78,20 @@ export default function DisposalMapScreen() {
 
   if (!region) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={Colors.light.primaryGreen} />
+      <View style={[styles.center, { backgroundColor: Colors.light.primaryGreen }] }>
+        <Text style={{ color: 'white', fontSize: 20 }}>Loading...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} initialRegion={region} showsUserLocation>
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={styles.map}
+        initialRegion={region}
+        showsUserLocation
+      >
         <Marker coordinate={region} title="You are here" />
         {sites.map((site) => (
           <Marker
@@ -92,8 +99,19 @@ export default function DisposalMapScreen() {
             coordinate={site.coordinate}
             title={site.title}
             pinColor={Colors.light.primaryGreen}
+            onPress={() => setDestination(site.coordinate)}
           />
         ))}
+        {destination && (
+          <MapViewDirections
+            origin={region}
+            destination={destination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={4}
+            strokeColor={Colors.light.primaryGreen}
+            onError={(err) => console.error('Directions error:', err)}
+          />
+        )}
       </MapView>
     </View>
   );
