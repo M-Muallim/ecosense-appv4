@@ -12,9 +12,9 @@ app.use(express.json());
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: 'dgcdkuyew',
-  api_key: '918895263956994',
-  api_secret: 'q2oo2s6MU0MPIFsmMeeieiSQyS0',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Test route

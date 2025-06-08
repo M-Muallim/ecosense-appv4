@@ -94,7 +94,7 @@ export const registerUser = async (email: string, password: string, displayName?
       emailVerified: data.emailVerified || false
     };
 
-    await fetch('http://192.168.1.124:3001/users', {
+    await fetch('http://192.168.1.123:3001/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
