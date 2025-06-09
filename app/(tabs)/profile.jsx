@@ -277,16 +277,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.primaryGreen,
   },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: '#F6F8F9',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    overflow: 'hidden',
+    marginTop: -20,
+  },
   container: {
     padding: 16,
     alignItems: 'center',
     paddingBottom: 120,
+    backgroundColor: '#F6F8F9',
   },
   headerBar: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     paddingHorizontal: 16,
     paddingVertical: 8,
+    marginBottom: 16,
   },
   settingsIcon: {
     padding: 8,

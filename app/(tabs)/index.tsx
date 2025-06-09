@@ -374,7 +374,7 @@ export default function HomeScreen() {
             <View style={styles.progressCircle}>
               <View style={styles.progressInner}>
                 <MaterialCommunityIcons 
-                  name="coffee" 
+                  name="leaf-maple" 
                   size={80} 
                   color={Colors.light.primaryGreen} 
                 />

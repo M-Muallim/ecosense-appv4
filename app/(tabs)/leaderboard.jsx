@@ -208,13 +208,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     overflow: 'hidden',
+    marginTop: 26,
   },
   podiumContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-end',
     paddingVertical: 16,
-    marginTop: 40,
+    marginTop: 30,
+    
   },
   topUserContainer: {
     alignItems: 'center',

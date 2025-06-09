@@ -1,0 +1,1 @@
+export const API_BASE = 'https://ecosense-appv4.onrender.com'; 

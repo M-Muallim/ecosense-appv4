@@ -1,5 +1,4 @@
-// Replace with your actual PC IP address below
-const API_BASE = 'https://ecosense-appv4.onrender.com';
+import { API_BASE } from '../config/apiConfig';
 
 export async function getUserProfile(firebaseUid) {
   try {

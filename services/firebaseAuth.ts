@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE } from '../config/apiConfig';
 
 // Firebase config
 const firebaseConfig = {
@@ -94,7 +95,7 @@ export const registerUser = async (email: string, password: string, displayName?
       emailVerified: data.emailVerified || false
     };
 
-    await fetch('http://192.168.1.123:3001/users', {
+    await fetch(`${API_BASE}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
