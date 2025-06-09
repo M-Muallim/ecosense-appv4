@@ -133,37 +133,6 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
       include: { challenge: true },
     });
 
-    // Get all recycled items for this user for the week
-    const recycled = await prisma.recycledItem.findMany({
-      where: {
-        userId: user.id,
-        createdAt: {
-          gte: weekStart,
-          lt: weekEnd,
-        },
-      },
-    });
-    // Expanded type mapping for all variants and plurals
-    const TYPE_MAP = {
-      plastic: 'plastic', plastics: 'plastic',
-      glass: 'glass', glasses: 'glass',
-      metal: 'metal', metals: 'metal',
-      paper: 'paper', papers: 'paper',
-      cardboard: 'cardboard', cardboards: 'cardboard',
-      clothes: 'clothes', clothing: 'clothes',
-      organic: 'organic', organicwaste: 'organic', waste: 'organic',
-      bottle: 'glass', bottles: 'glass',
-      box: 'cardboard', boxes: 'cardboard',
-      can: 'metal', cans: 'metal',
-      item: '', items: '', // fallback, will be ignored
-    };
-    // Count by mapped type (case-insensitive)
-    const stats = {};
-    for (const item of recycled) {
-      const mappedType = TYPE_MAP[item.type.toLowerCase()] || item.type.toLowerCase();
-      stats[mappedType] = (stats[mappedType] || 0) + 1;
-    }
-
     const userChallenges = [];
     for (const wc of weekChallenges) {
       // Use composite unique key for userChallenge
@@ -205,6 +174,39 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
         }
       }
       let shouldComplete = false;
+      // For each challenge, filter recycled items by that challenge's week
+      const challengeWeekStart = wc.weekStart;
+      const challengeWeekEnd = new Date(challengeWeekStart);
+      challengeWeekEnd.setDate(challengeWeekEnd.getDate() + 7);
+      const recycled = await prisma.recycledItem.findMany({
+        where: {
+          userId: user.id,
+          createdAt: {
+            gte: challengeWeekStart,
+            lt: challengeWeekEnd,
+          },
+        },
+      });
+      // Expanded type mapping for all variants and plurals
+      const TYPE_MAP = {
+        plastic: 'plastic', plastics: 'plastic',
+        glass: 'glass', glasses: 'glass',
+        metal: 'metal', metals: 'metal',
+        paper: 'paper', papers: 'paper',
+        cardboard: 'cardboard', cardboards: 'cardboard',
+        clothes: 'clothes', clothing: 'clothes',
+        organic: 'organic', organicwaste: 'organic', waste: 'organic',
+        bottle: 'glass', bottles: 'glass',
+        box: 'cardboard', boxes: 'cardboard',
+        can: 'metal', cans: 'metal',
+        item: '', items: '', // fallback, will be ignored
+      };
+      // Count by mapped type (case-insensitive)
+      const stats = {};
+      for (const item of recycled) {
+        const mappedType = TYPE_MAP[item.type.toLowerCase()] || item.type.toLowerCase();
+        stats[mappedType] = (stats[mappedType] || 0) + 1;
+      }
       // Match any word after the count (e.g., 'Recycle 10 Glass Items', 'Recycle 10 Plastics', etc.)
       const title = wc.challenge.title.toLowerCase();
       const singleTypeMatch = title.match(/recycle (\d+) ([a-z]+)/);
