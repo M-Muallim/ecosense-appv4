@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
@@ -237,27 +238,14 @@ export default function ProfileScreen() {
               <Ionicons name="chevron-forward" size={20} color="#999" />
             </TouchableOpacity>
             
-            {/* Privacy item (Standard) */}
-            <TouchableOpacity style={styles.settingItem}>
-              <Ionicons name="lock-closed-outline" size={24} color="#555" />
-              <Text style={styles.settingText}>Privacy</Text>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
-            </TouchableOpacity>
-            
-            {/* Reset Password item (Top Level) - Added first */}
+            {/* Help & Support item */}
             <TouchableOpacity 
-              style={styles.settingItem} 
-              onPress={() => { 
+              style={styles.settingItem}
+              onPress={() => {
                 setSettingsModalVisible(false);
-                router.push('/reset-password');
+                Linking.openURL('mailto:mohammed.muallim16@gmail.com?subject=Help%20%26%20Support');
               }}
             >
-              <Ionicons name="key-outline" size={24} color="#555" />
-              <Text style={styles.settingText}>Reset Password</Text>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.settingItem}>
               <Ionicons name="help-circle-outline" size={24} color="#555" />
               <Text style={styles.settingText}>Help & Support</Text>
               <Ionicons name="chevron-forward" size={20} color="#999" />
