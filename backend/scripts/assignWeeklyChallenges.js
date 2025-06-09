@@ -36,6 +36,12 @@ async function assignWeeklyChallenges() {
   console.log('Current week challenges set!');
 }
 
-assignWeeklyChallenges()
-  .catch(e => { console.error(e); process.exit(1); })
-  .finally(() => prisma.$disconnect()); 
+// Export the function for use in other files
+module.exports = assignWeeklyChallenges;
+
+// Only run if called directly (not when required)
+if (require.main === module) {
+  assignWeeklyChallenges()
+    .catch(e => { console.error(e); process.exit(1); })
+    .finally(() => prisma.$disconnect());
+} 
