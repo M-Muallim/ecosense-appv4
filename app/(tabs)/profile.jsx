@@ -65,7 +65,7 @@ export default function ProfileScreen() {
       </SafeAreaView>
     );
   }
-  const safeStats = statsData || { total: 0, plastic: 0, glass: 0, metal: 0, paper: 0, cardboard: 0, clothes: 0, organicWaste: 0 };
+  const safeStats = statsData || { total: 0, plastic: 0, glass: 0, metal: 0, paper: 0, cardboard: 0, clothes: 0, organic: 0 };
   // Format join date
   let joinedString = '';
   if (profileData?.createdAt) {

@@ -239,7 +239,7 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
   }
 });
 
-// Get a user's recycling stats for the current week
+// Get a user's recycling stats for all time
 app.get('/users/:firebaseUid/stats', async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -247,17 +247,10 @@ app.get('/users/:firebaseUid/stats', async (req, res) => {
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Get start of current week (Monday)
-    const now = new Date();
-    const day = now.getDay();
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
-    const weekStart = new Date(now.setDate(diff));
-    weekStart.setHours(0, 0, 0, 0);
-
+    // Fetch all recycled items for this user (no date filter)
     const recycled = await prisma.recycledItem.findMany({
       where: {
         userId: user.id,
-        createdAt: { gte: weekStart },
       },
     });
 
