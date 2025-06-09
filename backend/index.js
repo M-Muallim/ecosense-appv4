@@ -123,6 +123,9 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
     const diff = now.getDate() - day + (day === 0 ? -6 : 1);
     const weekStart = new Date(now.setDate(diff));
     weekStart.setHours(0, 0, 0, 0);
+    // Calculate end of week (next Monday)
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
 
     // Get current week's challenges
     const weekChallenges = await prisma.currentWeekChallenge.findMany({
@@ -134,7 +137,10 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
     const recycled = await prisma.recycledItem.findMany({
       where: {
         userId: user.id,
-        createdAt: { gte: weekStart },
+        createdAt: {
+          gte: weekStart,
+          lt: weekEnd,
+        },
       },
     });
     // Expanded type mapping for all variants and plurals
