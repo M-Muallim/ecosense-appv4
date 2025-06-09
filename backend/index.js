@@ -496,6 +496,20 @@ app.get('/leaderboard', async (req, res) => {
   }
 });
 
+// Run assign challenges
+app.post('/run-assign-challenges', async (req, res) => {
+  const secret = req.query.secret;
+  if (secret !== process.env.ASSIGN_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  try {
+    await require('./scripts/assignWeeklyChallenges')();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

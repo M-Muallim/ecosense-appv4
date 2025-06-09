@@ -21,7 +21,7 @@ async function uploadImageToBackend(imageUri, firebaseUid) {
   });
   formData.append('firebaseUid', firebaseUid);
 
-  const response = await fetch('http://192.168.1.124:3001/upload-profile-image', {
+  const response = await fetch('https://ecosense-appv4.onrender.com/upload-profile-image', {
     method: 'POST',
     body: formData,
     headers: {
