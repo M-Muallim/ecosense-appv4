@@ -232,6 +232,8 @@ interface UserChallenge {
   points: number;
   completed: boolean;
   completedAt: string | null;
+  userCount?: number;
+  required?: number;
 }
 
 export default function HomeScreen() {
@@ -400,16 +402,9 @@ export default function HomeScreen() {
               ) : (
                 challenges.map((challenge, idx) => {
                   const bgColor = '#E8FFF3';
-                  // Parse challenge title for type and required count
-                  let required = 1;
-                  let type = '';
-                  const match = challenge.title.match(/Recycle (\d+) (\w+)/i);
-                  if (match) {
-                    required = parseInt(match[1], 10);
-                    type = match[2].toLowerCase();
-                  }
-                  // Get user's count for this type from statsData
-                  const userCount = statsData?.[type] ?? 0;
+                  // Use userCount and required from backend for accurate progress
+                  const userCount = challenge.userCount ?? 0;
+                  const required = challenge.required ?? 1;
                   const progress = Math.min((userCount / required) * 100, 100);
                   const left = Math.max(required - userCount, 0);
                   return (

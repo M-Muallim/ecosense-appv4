@@ -210,12 +210,39 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
       // Match any word after the count (e.g., 'Recycle 10 Glass Items', 'Recycle 10 Plastics', etc.)
       const title = wc.challenge.title.toLowerCase();
       const singleTypeMatch = title.match(/recycle (\d+) ([a-z]+)/);
+      let required = 1;
+      let type = '';
       if (singleTypeMatch) {
-        const required = parseInt(singleTypeMatch[1], 10);
-        let type = singleTypeMatch[2];
-        type = TYPE_MAP[type] || type;
+        required = parseInt(singleTypeMatch[1], 10);
+        type = TYPE_MAP[singleTypeMatch[2]] || singleTypeMatch[2];
         const userCount = stats[type] || 0;
         if (userCount >= required) shouldComplete = true;
+        // Add userCount, required, and type to the challenge object
+        userChallenges.push({
+          id: uc.id,
+          challengeId: wc.challengeId,
+          title: wc.challenge.title,
+          description: wc.challenge.description,
+          points: wc.challenge.points,
+          completed: uc.completed,
+          completedAt: uc.completedAt,
+          userCount,
+          required,
+          type,
+        });
+      } else {
+        userChallenges.push({
+          id: uc.id,
+          challengeId: wc.challengeId,
+          title: wc.challenge.title,
+          description: wc.challenge.description,
+          points: wc.challenge.points,
+          completed: uc.completed,
+          completedAt: uc.completedAt,
+          userCount: 0,
+          required: 1,
+          type: '',
+        });
       }
       // TODO: Add multi-type and special challenge logic here
       if (!uc.completed && shouldComplete) {
@@ -230,15 +257,6 @@ app.get('/users/:firebaseUid/challenges', async (req, res) => {
         uc.completed = true;
         uc.completedAt = new Date();
       }
-      userChallenges.push({
-        id: uc.id,
-        challengeId: wc.challengeId,
-        title: wc.challenge.title,
-        description: wc.challenge.description,
-        points: wc.challenge.points,
-        completed: uc.completed,
-        completedAt: uc.completedAt,
-      });
     }
     res.json(userChallenges);
   } catch (error) {
