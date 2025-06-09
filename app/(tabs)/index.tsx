@@ -10,6 +10,7 @@ import {
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -243,6 +244,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
   const [challenges, setChallenges] = useState<UserChallenge[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Load profile, stats, and level only once (on mount or user change)
   useEffect(() => {
@@ -282,6 +284,27 @@ export default function HomeScreen() {
       }
     })();
   }, [user, isFocused]);
+
+  // Pull-to-refresh handler
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      if (!user) return;
+      const profile = await getUserProfile(user.uid);
+      setProfileData(profile);
+      const stats = await getUserWeeklyStats(user.uid);
+      setStatsData(stats);
+      const levelData = await getUserLevel(user.uid);
+      setUserLevel(levelData.level);
+      setLevelProgress(levelData);
+      const userChallenges = await getUserChallenges(user.uid);
+      setChallenges(userChallenges);
+    } catch (err) {
+      console.error('Error refreshing home data:', err);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -335,6 +358,14 @@ export default function HomeScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[Colors.light.primaryGreen]}
+              tintColor={Colors.light.primaryGreen}
+            />
+          }
         >
           {/* Level Card */}
           <View style={styles.levelCard}>

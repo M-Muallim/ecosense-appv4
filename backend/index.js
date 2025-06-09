@@ -503,7 +503,8 @@ app.post('/run-assign-challenges', async (req, res) => {
     return res.status(403).json({ error: 'Forbidden' });
   }
   try {
-    await require('./scripts/assignWeeklyChallenges')();
+    const assignWeeklyChallenges = require('./scripts/assignWeeklyChallenges');
+    await assignWeeklyChallenges();
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
