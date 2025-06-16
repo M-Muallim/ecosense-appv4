@@ -4,6 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const cloudinary = require('cloudinary').v2;
+const axios = require('axios');
 const app = express();
 const prisma = new PrismaClient();
 
@@ -545,6 +546,26 @@ app.get('/locations', async (req, res) => {
   } catch (error) {
     console.error('Error fetching locations:', error);
     res.status(500).json({ error: 'Failed to fetch locations' });
+  }
+});
+
+// Directions API endpoint
+app.get('/directions', async (req, res) => {
+  const { origin, destination } = req.query;
+  if (!origin || !destination) {
+    return res.status(400).json({ error: 'origin and destination are required' });
+  }
+  const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+  if (!GOOGLE_MAPS_API_KEY) {
+    return res.status(500).json({ error: 'Google Maps API key not configured' });
+  }
+  try {
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&key=${GOOGLE_MAPS_API_KEY}`;
+    const response = await axios.get(url);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching directions:', error);
+    res.status(500).json({ error: 'Failed to fetch directions' });
   }
 });
 
