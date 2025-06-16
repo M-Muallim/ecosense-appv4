@@ -530,6 +530,24 @@ app.post('/run-assign-challenges', async (req, res) => {
   }
 });
 
+// Get all recycling center locations
+app.get('/locations', async (req, res) => {
+  try {
+    const locations = await prisma.location.findMany({
+      select: {
+        id: true,
+        name: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+    res.json(locations);
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    res.status(500).json({ error: 'Failed to fetch locations' });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
