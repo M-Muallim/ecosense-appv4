@@ -317,13 +317,9 @@ export default function HomeScreen() {
     );
   }
 
-  // Compute progress within the current level
-  const totalItems = statsData?.total ?? 0;
-  const threshold = userLevel <= 10 ? 20 : 40;
-  const offsetStart = userLevel <= 10 ? 20 * (userLevel - 1) : 200 + 40 * (userLevel - 11);
-  let progressInLevel = totalItems - offsetStart;
-  if (progressInLevel < 0) progressInLevel = 0;
-  if (progressInLevel > threshold) progressInLevel = threshold;
+  // Compute progress within the current level using backend data
+  const progressInLevel = levelProgress?.progress ?? 0;
+  const threshold = levelProgress?.needed ?? 0;
 
   return (
     <SafeAreaView style={[styles.safe, { paddingTop: insets.top }]}>
@@ -379,14 +375,12 @@ export default function HomeScreen() {
                   size={80} 
                   color={Colors.light.primaryGreen} 
                 />
-                <Text style={styles.levelLabel}>
-                  {`Level ${userLevel}`}
-                </Text>
+                <Text style={styles.levelLabel}>{`Level ${userLevel}`}</Text>
               </View>
             </View>
             <View style={styles.progressTextContainer}>
               <Text style={styles.progressText}>
-                {levelProgress ? `${levelProgress.progress}/${levelProgress.needed} Recycle needed` : ''}
+                {levelProgress ? `${progressInLevel}/${threshold} Recycle needed` : ''}
               </Text>
             </View>
           </View>
