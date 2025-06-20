@@ -8,7 +8,8 @@ import {
   ScrollView,
   FlatList,
   Platform,
-  StatusBar as RNStatusBar
+  StatusBar as RNStatusBar,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -157,9 +158,10 @@ export default function LeaderboardScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.light.primaryGreen }}>
-        <Text style={{ color: 'white', fontSize: 20 }}>Loading...</Text>
-        </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.light.primaryGreen} />
+        <Text style={{ color: Colors.light.primaryGreen, marginTop: 12 }}>Loading leaderboard...</Text>
+      </View>
     );
   }
 

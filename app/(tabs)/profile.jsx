@@ -61,9 +61,10 @@ export default function ProfileScreen() {
 
   if (profileLoading || statsLoading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.light.primaryGreen }}>
-        <Text style={{ color: 'white', fontSize: 20 }}>Loading...</Text>
-      </SafeAreaView>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.light.primaryGreen} />
+        <Text style={{ color: Colors.light.primaryGreen, marginTop: 12 }}>Loading profile...</Text>
+      </View>
     );
   }
   const safeStats = statsData || { total: 0, plastic: 0, glass: 0, metal: 0, paper: 0, cardboard: 0, clothes: 0, organic: 0 };

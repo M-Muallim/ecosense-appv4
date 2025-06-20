@@ -11,7 +11,7 @@ export default function CameraScreen() {
     if (!isFocused) return;
 
     (async () => {
-      // 1) Request camera permission
+      // Request camera permission
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(
@@ -21,13 +21,12 @@ export default function CameraScreen() {
         return;
       }
 
-      // 2) Launch native camera UI
+      // Launch native camera UI
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.7,
       });
 
-      console.log('📷 Camera result:', result);
       // TODO: handle result.uri
     })();
   }, [isFocused]);
@@ -38,7 +37,7 @@ export default function CameraScreen() {
     </View>
   );
 }
-//fdsfkjlsdf fdgdfg
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
