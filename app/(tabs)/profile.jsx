@@ -241,8 +241,8 @@ export default function ProfileScreen() {
             
             {/* Help & Support item */}
             <TouchableOpacity 
-              style={styles.settingItem}
-              onPress={() => {
+              style={styles.settingItem} 
+              onPress={() => { 
                 setSettingsModalVisible(false);
                 Linking.openURL('mailto:mohammed.muallim16@gmail.com?subject=Help%20%26%20Support');
               }}

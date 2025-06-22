@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   fieldGroup: { marginBottom: 20 },
   label: { fontSize: 16, marginBottom: 8, color: '#333' },
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 10, fontSize: 16 },
-  saveButton: { backgroundColor: '#4CAF50', paddingVertical: 12, borderRadius: 6, alignItems: 'center' },
+  saveButton: { backgroundColor: '#4CAF50', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
   saveButtonDisabled: { opacity: 0.6 },
   saveButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   closeButton: {

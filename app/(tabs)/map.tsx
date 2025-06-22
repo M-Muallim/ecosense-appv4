@@ -58,9 +58,9 @@ export default function DisposalMapScreen() {
         }));
         if (isActive) setSites(fixedData);
         // Get user location and start watching
-        const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
-          const loc = await Location.getCurrentPositionAsync({});
+      const loc = await Location.getCurrentPositionAsync({});
           if (isActive) {
             setUserLocation({
               latitude: loc.coords.latitude,
@@ -69,8 +69,8 @@ export default function DisposalMapScreen() {
             setRegion({
               latitude: loc.coords.latitude,
               longitude: loc.coords.longitude,
-              latitudeDelta: 0.02,
-              longitudeDelta: 0.02,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
             });
           }
           // Start watching user location

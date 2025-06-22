@@ -81,7 +81,7 @@ export default function LoginScreen() {
         <SafeAreaView style={styles.header}>
           <View style={styles.logoWrapper}>
             <View style={styles.logoPlaceholder}>
-              <Text style={styles.logoText}>Logo</Text>
+              <Text style={styles.logoText}>EcoS</Text>
             </View>
           </View>
         </SafeAreaView>
@@ -129,16 +129,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.row}>
-            <Pressable 
-              style={styles.remember} 
-              onPress={() => setRemember(!remember)}
-              disabled={isLoading}
-            >
-              <View style={[styles.checkbox, remember && styles.checkboxChecked]}>
-                {remember && <Ionicons name="checkmark" size={16} color="#fff" />}
-              </View>
-              <Text style={styles.rememberText}>Remember Me</Text>
-            </Pressable>
+            
             <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
               <Text style={styles.forgot}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -199,7 +190,8 @@ const styles = StyleSheet.create({
   },
   logoText: { 
     color: Colors.light.primaryGreen, 
-    fontWeight: '700' 
+    fontWeight: '700',
+    fontSize: 32,
   },
   card: {
     width: '90%',
@@ -279,7 +271,8 @@ const styles = StyleSheet.create({
   },
   forgot: { 
     color: Colors.light.primaryGreen, 
-    fontWeight: '600' 
+    fontWeight: '600', 
+    paddingLeft:'auto',
   },
   button: {
     backgroundColor: Colors.light.primaryGreen,

@@ -159,9 +159,9 @@ export default function LeaderboardScreen() {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={Colors.light.primaryGreen} />
+          <ActivityIndicator size="large" color={Colors.light.primaryGreen} />
         <Text style={{ color: Colors.light.primaryGreen, marginTop: 12 }}>Loading leaderboard...</Text>
-      </View>
+        </View>
     );
   }
 
