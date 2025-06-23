@@ -1,3 +1,4 @@
+
 // app/(tabs)/_layout.tsx
 import React from 'react';
 import { StyleSheet, View, Dimensions, Platform } from 'react-native';

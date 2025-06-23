@@ -84,6 +84,7 @@ export default function LeaderboardScreen() {
     try {
       const data = await getLeaderboardData();
       setLeaderboard(data);
+    const sortedData = data.sort((a, b) => a.weightedScore - b.weightedScore);
     } catch (e) {
       setLeaderboard([]);
     }
